@@ -53,7 +53,8 @@ class OrderController extends Controller
         $id = Auth::user()->id;
 
         DB::beginTransaction();
-        $cart = Cart::where('user_id', '=', $id)->first();
+        $cartObject = Cart::where('user_id', '=', $id);
+        $cart = $cartObject->first();
         $cartItems = CartItem::where('cart_id', '=', $cart->id)->get();
         $order = Order::create(['user_id' => $id]);
      
@@ -77,6 +78,7 @@ class OrderController extends Controller
             }
             $inventoryLock->update(['stock' => $inventory->stock -  $cartItem->quantity]); 
         }
+        $cart->delete();
 
         DB::commit();
         
